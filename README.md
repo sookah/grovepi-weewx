@@ -12,7 +12,7 @@ This is a driver for weewx that interfaces GrovePI and its weather station compo
 
     `wget -O weewx-grovepi.zip https://github.com/sookah/weewx-grovepi/archive/master.zip`
 3. install the driver
-
+    
     `wee_extension --install weewx-grovepi.zip`
 
 4. configure the driver
@@ -22,3 +22,10 @@ This is a driver for weewx that interfaces GrovePI and its weather station compo
 5. start weewx
 
     `sudo /etc/init.d/weewx start`
+
+
+# The driver
+
+## Changing the driver
+
+`http://weewx.com/docs/utilities.htm#wee_config_utility`
