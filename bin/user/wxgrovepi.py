@@ -57,12 +57,13 @@ class GrovePiStation:
     def get_humidity(self):
         pass
 
-    def get_wind(self):
-        # Via Anemometer
+    def get_anemometer_data(self):
         pass
 
-    def get_rain(self):
-        # via Anemometer
+    def get_wind_data(self):
+        pass
+
+    def get_rain_data(self):
         pass
 
 
