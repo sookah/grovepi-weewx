@@ -1,24 +1,24 @@
 # WeeWX - GrovePi
-Integrating GrovePi with Weewx platform
+
+> Integrating GrovePi with Weewx platform
 
 This is a driver for weewx that interfaces GrovePI and its weather station components.
 
-Installation
+## Installation
 
-0) install weewx (see the weewx user guide)
+1. install weewx (see the weewx user guide)
 
-1) download the driver
+2. download the driver
 
-wget -O weewx-grovepi.zip https://github.com/sookah/weewx-grovepi/archive/master.zip
+    `wget -O weewx-grovepi.zip https://github.com/sookah/weewx-grovepi/archive/master.zip`
+3. install the driver
 
-2) install the driver
+    `wee_extension --install weewx-grovepi.zip`
 
-wee_extension --install weewx-grovepi.zip
+4. configure the driver
 
-3) configure the driver
+    `wee_config --reconfigure`
 
-wee_config --reconfigure
+5. start weewx
 
-4) start weewx
-
-sudo /etc/init.d/weewx start
+    `sudo /etc/init.d/weewx start`
