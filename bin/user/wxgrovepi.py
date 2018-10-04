@@ -32,6 +32,11 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
     global DRIVER_NAME
 
     def __init__(self, **stn_dict):
+        """Initialize the simulator
+        NAMED ARGUMENTS:
+        loop_interval: The time (in seconds) between emitting LOOP packets.
+        [Optional. Default is 2.5]`
+        """
         self.name = DRIVER_NAME
         self.loop_interval = float(stn_dict.get('loop_interval', 5))
 
@@ -43,7 +48,7 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
         pass
 
 
-class GrovePiStation:
+class GrovePiWeatherStation:
     """
     GrovePi Class to grab data from various sensors
     """
@@ -67,25 +72,34 @@ class GrovePiStation:
         pass
 
 
+import time
+from tentacle_pi.AM2315 import AM2315
+
+
 # TODO: These classes maynot be required later abstract everything to a grovePIStation
-# class SensorAM2315:
-#     """
-#     Sensor AM2315 with temperature and humidity measurement
-#     """
-#
-#     def __init__(self):
-#         pass
-#
-#     def get_temp(self):
-#         pass
-#
-#     def get_humidity(self):
-#         pass
-#
+class SensorAM2315(object):
+    """
+    Sensor AM2315 with temperature and humidity measurement
+    """
+
+    def __init__(self, i2c_bus="/dev/i2c-1"):
+        i2c_adress = 0x5c
+        self.am = AM2315(i2c_adress, i2c_bus)
+        self.temperature = 0
+        self.humidity = 0
+        self.crc_check = 0
+
+    def get_data(self):
+        self.temperature, self.humidity, self.crc_check = self.am.sense()
+
+    def get_temp(self):
+        return self.temperature
+
+    def get_humidity(self):
+        return self.humidity
 
 # define a main entry point for basic testing of the station without weewx
 # engine and service overhead.  invoke this as follows from the weewx root dir:
-#
 # PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
 
 
