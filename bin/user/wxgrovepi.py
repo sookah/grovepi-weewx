@@ -98,10 +98,79 @@ class SensorAM2315(object):
     def get_humidity(self):
         return self.humidity
 
+
+# imports
+
+import time
+import sys
+import math
+
+sys.path.append('../Adafruit_ADS1x15')
+sys.path.append('../')
+
+import config
+
+import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
+
+
+class get_wind_info(object):
+    def __init__(self):
+        # GPIO Numbering Mode GPIO.BCM
+        #
+        anenometerPin = 26
+        rainPin = 21
+
+        # constants
+
+        SDL_MODE_INTERNAL_AD = 0
+        SDL_MODE_I2C_ADS1015 = 1
+
+        # sample mode means return immediately.  THe wind speed is averaged at sampleTime or when you ask, whichever is longer
+        SDL_MODE_SAMPLE = 0
+        # Delay mode means to wait for sampleTime and the average after that time.
+        SDL_MODE_DELAY = 1
+
+        self.weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(
+            anenometerPin, rainPin, 0, 0, SDL_MODE_I2C_ADS1015)
+
+        self.weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
+
+    # custom function to get the values from the sensor
+    def get__all(self):
+        maxEverWind = 0.0
+        maxEverGust = 0.0
+        totalRain = 0
+        for count in range(10):
+            currentWindSpeed = self.weatherStation.current_wind_speed()/1.609
+            currentWindGust = self.weatherStation.get_wind_gust()/1.609
+            totalRain = totalRain + \
+                (self.weatherStation.get_current_rain_total()/25.4)
+
+            if currentWindSpeed > maxEverWind:
+                maxEverWind = currentWindSpeed
+
+            if currentWindGust > maxEverGust:
+                maxEverGust = currentWindGust
+
+            time.sleep(1.0)
+
+        # TODO fix this funciton here
+        # return self.reiknaVindatt(self.weatherStation.current_wind_direction()) + (" %0.1f m/s") % (currentWindSpeed)
+
+    # svaka flotta vindutreikningafallid okkar!
+    def reiknaVindatt(self, dummy, vindur):
+        # do lot of stuff (TM)
+
+        val = int(math.floor(vindur / 22.5))
+        arr = ["N", "NNA", "NA", "ANA", "A", "ASA", "SA", "SSA",
+               "S", "SSV", "SV", "VSV", "V", "VNV", "NV", "NNV"]
+
+        return arr[(val % 16)]
+
+
 # define a main entry point for basic testing of the station without weewx
 # engine and service overhead.  invoke this as follows from the weewx root dir:
 # PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
-
 
 if __name__ == '__main__':
     driver = WXGrovePi()
