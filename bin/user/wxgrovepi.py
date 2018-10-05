@@ -94,6 +94,7 @@ class SensorAM2315(object):
 
     def get_data(self):
         self.temperature, self.humidity, self.crc_check = self.am.sense()
+        print(self.crc_check)
 
     def get_temp(self):
         return self.temperature
@@ -119,9 +120,9 @@ import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
 class GrovePiWeatherRack(object):
     def __init__(self):
         # GPIO Numbering Mode GPIO.BCM
-        #
-        anenometerPin = 26
-        rainPin = 21
+
+        ANENOMETER_PIN = 26
+        RAIN_PIN = 21
 
         # constants
 
@@ -134,7 +135,7 @@ class GrovePiWeatherRack(object):
         SDL_MODE_DELAY = 1
 
         self.weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(
-            anenometerPin, rainPin, 0, 0, SDL_MODE_I2C_ADS1015)
+            ANENOMETER_PIN, RAIN_PIN, 0, 0, SDL_MODE_I2C_ADS1015)
 
         self.weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
 
@@ -184,4 +185,4 @@ if __name__ == '__main__':
         test_grovepi.update_data()
         print(test_grovepi.get_temp())
         print(test_grovepi.get_humidity())
-        time.sleep(0.2)
+        time.sleep(2)
