@@ -8,5 +8,5 @@ setup(
     license='',
     author='Saujan Ghimire',
     author_email='',
-    description='A weewx driver'
+    description='A weewx driver', install_requires=['config']
 )

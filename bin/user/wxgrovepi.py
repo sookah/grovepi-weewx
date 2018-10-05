@@ -5,8 +5,8 @@
 # weewx driver that reads data from GrovePi Weather Station
 #
 
-from __future__ import with_statement
 from __future__ import print_function
+from __future__ import with_statement
 
 import weewx.drivers
 
@@ -36,6 +36,7 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
         NAMED ARGUMENTS:
         loop_interval: The time (in seconds) between emitting LOOP packets.
         [Optional. Default is 2.5]`
+        :param stn_dict:
         """
         self.name = DRIVER_NAME
         self.loop_interval = float(stn_dict.get('loop_interval', 5))
@@ -54,13 +55,18 @@ class GrovePiWeatherStation:
     """
 
     def __init__(self):
-        pass
+        self.temp_sensor = SensorAM2315()
+        self.weather = GrovePiWeatherRack()
+
+    def update_data(self):
+        # get AM2315 data
+        self.temp_sensor.get_data()
 
     def get_temp(self):
-        pass
+        return round(self.temp_sensor.get_temp(), 1)
 
     def get_humidity(self):
-        pass
+        return round(self.temp_sensor.get_humidity(), 1)
 
     def get_anemometer_data(self):
         pass
@@ -72,18 +78,15 @@ class GrovePiWeatherStation:
         pass
 
 
-import time
 from tentacle_pi.AM2315 import AM2315
 
 
-# TODO: These classes maynot be required later abstract everything to a grovePIStation
 class SensorAM2315(object):
     """
     Sensor AM2315 with temperature and humidity measurement
     """
 
-    def __init__(self, i2c_bus="/dev/i2c-1"):
-        i2c_adress = 0x5c
+    def __init__(self, i2c_adress=0x5c, i2c_bus="/dev/i2c-1"):
         self.am = AM2315(i2c_adress, i2c_bus)
         self.temperature = 0
         self.humidity = 0
@@ -113,7 +116,7 @@ import config
 import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
 
 
-class get_wind_info(object):
+class GrovePiWeatherRack(object):
     def __init__(self):
         # GPIO Numbering Mode GPIO.BCM
         #
@@ -141,10 +144,10 @@ class get_wind_info(object):
         maxEverGust = 0.0
         totalRain = 0
         for count in range(10):
-            currentWindSpeed = self.weatherStation.current_wind_speed()/1.609
-            currentWindGust = self.weatherStation.get_wind_gust()/1.609
+            currentWindSpeed = self.weatherStation.current_wind_speed() / 1.609
+            currentWindGust = self.weatherStation.get_wind_gust() / 1.609
             totalRain = totalRain + \
-                (self.weatherStation.get_current_rain_total()/25.4)
+                        (self.weatherStation.get_current_rain_total() / 25.4)
 
             if currentWindSpeed > maxEverWind:
                 maxEverWind = currentWindSpeed
@@ -173,4 +176,12 @@ class get_wind_info(object):
 # PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
 
 if __name__ == '__main__':
+    print("Running wxgrovepi")
     driver = WXGrovePi()
+
+    test_grovepi = GrovePiWeatherStation()
+    for i in range(0, 3):
+        test_grovepi.update_data()
+        print(test_grovepi.get_temp())
+        print(test_grovepi.get_humidity())
+        time.sleep(0.2)
