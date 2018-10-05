@@ -23,9 +23,23 @@ This is a driver for weewx that interfaces GrovePI and its weather station compo
 
     `sudo /etc/init.d/weewx start`
 
+### Additional installation
 
-# The driver
+Following additional packages are needed for the package (also in setup.py)
 
-## Changing the driver
+`pip install config`
+
+
+## The driver
+
+### Changing the driver
 
 `http://weewx.com/docs/utilities.htm#wee_config_utility`
+
+
+## Testing the driver
+
+load all the modules in the PYTHONPATH and run
+```bash
+PYTHONPATH=/usr/share/weewx:/home/pi/SDL_Pi_GroveWeatherPi/SDL_Pi_WeatherRack/:/home/pi/SDL_Pi_GroveWeatherPi/SDL_Adafruit_ADS1x15/ python wxgrovepi.py  --debug
+```
