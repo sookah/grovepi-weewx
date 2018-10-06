@@ -23,6 +23,10 @@ This is a driver for weewx that interfaces GrovePI and its weather station compo
 
     `sudo /etc/init.d/weewx start`
 
+Here is a extension info from weewx:
+
+https://github.com/weewx/weewx/wiki/extensions#how-to-install-an-extension
+
 ### Additional installation
 
 Following additional packages are needed for the package (also in setup.py)

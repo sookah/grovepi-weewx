@@ -10,11 +10,12 @@ from __future__ import with_statement
 
 import weewx.drivers
 
-DRIVER_NAME = 'grovepi'  # type: str
+DRIVER_NAME = 'wxgrovepi'  # type: str
 DRIVER_VERSION = '0.1'  # type: str
 
 DEBUG_SERIAL = 0  # type: bool
 
+import datetime
 
 # Define the loader
 # This is a factory function that returns an instance of the driver.
@@ -36,12 +37,22 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
     def __init__(self, **stn_dict):
         """Initialize the simulator
         NAMED ARGUMENTS:
+
         loop_interval: The time (in seconds) between emitting LOOP packets.
-        [Optional. Default is 2.5]`
+        [Optional. Default is 5]`
+
+        max_tries - how often to retry serial communication before giving up
+        [Optional. Default is 5]
+
+        retry_wait - how long to wait, in seconds, before retrying after a failure
+
         :param stn_dict:
         """
         self.name = DRIVER_NAME
-        self.loop_interval = float(stn_dict.get('loop_interval', 5))
+
+        self.polling_interval = float(stn_dict.get('loop_interval', 5))
+        self.max_tries = int(stn_dict.get('max_tries', 5))
+        self.retry_wait = int(stn_dict.get('retry_wait', 10))
 
     @property
     def hardware_name(self):
@@ -53,7 +64,36 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
         return self.name
 
     def genLoopPackets(self):
-        pass
+        while True:
+            # Create Loop packet
+            # test data
+            data = [99, 100]
+            # TODO check for the right number of params, this is dummy check
+            if len(data) == len(data):  # data line is complete, process
+                for i in range(1, (len(data))):
+                    try:
+                        data[i] = float(data[i])
+                    except ValueError:
+                        data[i] = None
+
+                _packet = {
+                    'dateTime': int(time.time() + 0.5),
+                    'usUnits': weewx.METRIC,
+                    'outTemp': data[0],
+                    'outHumidity': data[1],
+                    }
+
+                yield _packet
+
+            # sleep_time = (start_time - time.time()) + self.loop_interval
+            if self.polling_interval:
+                time.sleep(self.polling_interval)
+
+
+class PiWeatherConfEditor(weewx.drivers.AbstractConfEditor):
+    @property
+    def default_stanza(self):
+        return
 
 
 class GrovePiWeatherStation:
@@ -188,8 +228,11 @@ if __name__ == '__main__':
     driver = WXGrovePi()
 
     test_grovepi = GrovePiWeatherStation()
+
     for i in range(0, 3):
         test_grovepi.update_data()
         print(test_grovepi.get_temp())
         print(test_grovepi.get_humidity())
         time.sleep(2)
+
+    driver.genLoopPackets()
