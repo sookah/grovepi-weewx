@@ -14,13 +14,10 @@
 import time
 import sys
 
-sys.path.append('../Adafruit_ADS1x15')
+sys.path.append('../SDL_Adafruit_ADS1x15')
 sys.path.append('../')
 
-import config
-
 import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
-
 #
 # GPIO Numbering Mode GPIO.BCM
 #
@@ -40,7 +37,7 @@ SDL_MODE_SAMPLE = 0
 #Delay mode means to wait for sampleTime and the average after that time.
 SDL_MODE_DELAY = 1
 
-weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(anenometerPin, rainPin, 0,0, SDL_MODE_I2C_ADS1015)
+weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(anenometerPin, rainPin, 0, 0, SDL_MODE_I2C_ADS1015)
 
 weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
 #weatherStation.setWindMode(SDL_MODE_DELAY, 5.0)

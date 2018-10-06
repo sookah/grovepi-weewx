@@ -10,12 +10,22 @@ from __future__ import with_statement
 
 import weewx.drivers
 
+import time
+import sys
+import math
+
+from tentacle_pi.AM2315 import AM2315
+
+print(sys.path)
+sys.path.append('SDL_Pi_WeatherRack')
+from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
+
+
 DRIVER_NAME = 'wxgrovepi'  # type: str
 DRIVER_VERSION = '0.1'  # type: str
 
 DEBUG_SERIAL = 0  # type: bool
 
-import datetime
 
 # Define the loader
 # This is a factory function that returns an instance of the driver.
@@ -81,7 +91,7 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
                     'usUnits': weewx.METRIC,
                     'outTemp': data[0],
                     'outHumidity': data[1],
-                    }
+                }
 
                 yield _packet
 
@@ -125,8 +135,6 @@ class GrovePiWeatherStation:
         pass
 
 
-from tentacle_pi.AM2315 import AM2315
-
 
 class SensorAM2315(object):
     """
@@ -151,19 +159,6 @@ class SensorAM2315(object):
 
 
 # imports
-
-import time
-import sys
-import math
-
-sys.path.append('../Adafruit_ADS1x15')
-sys.path.append('../')
-
-import config
-
-import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
-
-
 class GrovePiWeatherRack(object):
     def __init__(self):
         # GPIO Numbering Mode GPIO.BCM
