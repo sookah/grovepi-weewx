@@ -17,6 +17,8 @@ DEBUG_SERIAL = 0  # type: bool
 
 
 # Define the loader
+# This is a factory function that returns an instance of the driver.
+# It has two arguments: the configuration dictionary, and a reference to the weeWX engine.
 def loader(config_dict, engine):
     return WXGrovePi(**config_dict[DRIVER_NAME])
 
@@ -43,6 +45,11 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
 
     @property
     def hardware_name(self):
+        """
+        Return a string with a short nickname for the hardware
+
+        :return: Driver name
+        """
         return self.name
 
     def genLoopPackets(self):
