@@ -20,9 +20,8 @@ sys.path.insert(0, '/home/pi/SDL_Pi_GroveWeatherPi/SDL_Pi_WeatherRack')
 
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
-
 DRIVER_NAME = 'wxgrovepi'  # type: str
-DRIVER_VERSION = '0.1'  # type: str
+DRIVER_VERSION = '0.2'  # type: str
 
 DEBUG_SERIAL = 0  # type: bool
 
@@ -30,12 +29,12 @@ DEBUG_SERIAL = 0  # type: bool
 # Define the loader
 # This is a factory function that returns an instance of the driver.
 # It has two arguments: the configuration dictionary, and a reference to the weeWX engine.
-def loader(config_dict, engine):
+def loader(config_dict, _):
     return WXGrovePi(**config_dict[DRIVER_NAME])
 
 
 def confeditor_loader():
-    return WXGrovePi()
+    return WXGrovePiConfEditor()
 
 
 class WXGrovePi(weewx.drivers.AbstractDevice):
@@ -100,13 +99,20 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
                 time.sleep(self.polling_interval)
 
 
-class PiWeatherConfEditor(weewx.drivers.AbstractConfEditor):
+class WXGrovePiConfEditor(weewx.drivers.AbstractConfEditor):
     @property
     def default_stanza(self):
-        return
+        return """
+          
+        [WXGrovePi]
+        # This section is for the GroveWeatherPi series of weather stations.
+        # The driver to use:
+        driver = weewx.drivers.ws23xx
+        
+        """
 
 
-class GrovePiWeatherStation:
+class GrovePiWeatherStation(object):
     """
     GrovePi Class to grab data from various sensors
     """
@@ -133,7 +139,6 @@ class GrovePiWeatherStation:
 
     def get_rain_data(self):
         pass
-
 
 
 class SensorAM2315(object):

@@ -18,7 +18,7 @@ class WXGrovePiInstaller(ExtensionInstaller):
             config={
                 'Station': {
                     'station_type': 'GrovePi'},
-                'GrovePi': {
+                'wxgrovepi': {
                     'poll_interval': '10',
                     'path': '/var/tmp/datafile',
                     'driver': 'user.wxgrovepi'}},
