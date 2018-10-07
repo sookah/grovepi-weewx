@@ -18,7 +18,7 @@ from tentacle_pi.AM2315 import AM2315
 
 sys.path.insert(0, '/home/pi/SDL_Pi_GroveWeatherPi/SDL_Pi_WeatherRack')
 
-from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
+from bin.user.SDL_Adafruit_ADS1x15 import SDL_Pi_WeatherRack
 
 DRIVER_NAME = 'wxgrovepi'  # type: str
 DRIVER_VERSION = '0.2'  # type: str

@@ -28,7 +28,8 @@ except:
 import sys
 import time as time_
 
-from SDL_Adafruit_ADS1x15.SDL_Adafruit_ADS1x15 import ADS1x15
+
+from SDL_Adafruit_ADS1x15 import ADS1x15
 
 import RPi.GPIO as GPIO
 
