@@ -76,27 +76,18 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
         while True:
             # Create Loop packet
             # test data
-            data = [99, 100]
-            # TODO check for the right number of params, this is dummy check
-            if len(data) == len(data):  # data line is complete, process
-                for i in range(1, (len(data))):
-                    try:
-                        data[i] = float(data[i])
-                    except ValueError:
-                        data[i] = None
 
-                _packet = {
-                    'dateTime': int(time.time() + 0.5),
-                    'usUnits': weewx.METRIC,
-                    'outTemp': data[0],
-                    'outHumidity': data[1],
-                }
+            _packet = {
+                'dateTime': int(time.time() + 0.5),
+                'usUnits': weewx.METRIC,
+                'outTemp': 22.0,
+                'outHumidity': 50.0,
+            }
 
-                yield _packet
+            yield _packet
 
             # sleep_time = (start_time - time.time()) + self.loop_interval
-            if self.polling_interval:
-                time.sleep(self.polling_interval)
+            time.sleep(self.polling_interval)
 
 
 class WXGrovePiConfEditor(weewx.drivers.AbstractConfEditor):
