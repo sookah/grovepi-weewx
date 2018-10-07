@@ -10,7 +10,7 @@ def loader():
 class WXGrovePiInstaller(ExtensionInstaller):
     def __init__(self):
         super(WXGrovePiInstaller, self).__init__(
-            version="0.1",
+            version="0.2",
             name='wxgrovepi',
             description='weewx driver for GrovePi.',
             author="Saujan Ghimire",
