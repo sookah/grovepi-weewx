@@ -85,7 +85,6 @@ class WXGrovePiDriver(weewx.drivers.AbstractDevice):
             _packet['outHumidity'] = 50.0
             yield _packet
 
-            # sleep_time = (start_time - time.time()) + self.loop_interval
             time.sleep(self.polling_interval)
 
 
@@ -97,8 +96,7 @@ class WXGrovePiConfEditor(weewx.drivers.AbstractConfEditor):
         [WXGrovePi]
         # This section is for the GroveWeatherPi series of weather stations.
         # The driver to use:
-        driver = weewx.drivers.ws23xx
-        
+        driver = user.wxgrovepi        
         """
 
 
