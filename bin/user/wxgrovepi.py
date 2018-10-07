@@ -73,17 +73,17 @@ class WXGrovePiDriver(weewx.drivers.AbstractDevice):
         return self.name
 
     def genLoopPackets(self):
-        packet = {
+        _packet = {
             'dateTime': int(time.time() + 0.5),
             'usUnits': weewx.METRIC,
         }
         while True:
-            # Create Loop packet
+            # Create Loop _packet
             # test data
 
-            packet['outTemp'] = 22.0
-            packet['outHumidity'] = 50.0
-            yield packet
+            _packet['outTemp'] = 22.0
+            _packet['outHumidity'] = 50.0
+            yield _packet
 
             # sleep_time = (start_time - time.time()) + self.loop_interval
             time.sleep(self.polling_interval)
