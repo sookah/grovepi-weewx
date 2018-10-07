@@ -16,8 +16,8 @@ import math
 
 from tentacle_pi.AM2315 import AM2315
 
-print(sys.path)
-sys.path.append('SDL_Pi_WeatherRack')
+sys.path.index(0, '/home/pi/SDL_Pi_GroveWeatherPi/SDL_Pi_WeatherRack')
+
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
 
