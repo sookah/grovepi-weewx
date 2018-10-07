@@ -30,14 +30,14 @@ DEBUG_SERIAL = 0  # type: bool
 # This is a factory function that returns an instance of the driver.
 # It has two arguments: the configuration dictionary, and a reference to the weeWX engine.
 def loader(config_dict, _):
-    return WXGrovePi(**config_dict[DRIVER_NAME])
+    return WXGrovePiDriver(**config_dict[DRIVER_NAME])
 
 
 def confeditor_loader():
     return WXGrovePiConfEditor()
 
 
-class WXGrovePi(weewx.drivers.AbstractDevice):
+class WXGrovePiDriver(weewx.drivers.AbstractDevice):
     """
         weewx driver that communicates with an GrovePi Weather Station
     """
@@ -73,18 +73,17 @@ class WXGrovePi(weewx.drivers.AbstractDevice):
         return self.name
 
     def genLoopPackets(self):
+        packet = {
+            'dateTime': int(time.time() + 0.5),
+            'usUnits': weewx.METRIC,
+        }
         while True:
             # Create Loop packet
             # test data
 
-            _packet = {
-                'dateTime': int(time.time() + 0.5),
-                'usUnits': weewx.METRIC,
-                'outTemp': 22.0,
-                'outHumidity': 50.0,
-            }
-
-            yield _packet
+            packet['outTemp'] = 22.0
+            packet['outHumidity'] = 50.0
+            yield packet
 
             # sleep_time = (start_time - time.time()) + self.loop_interval
             time.sleep(self.polling_interval)
@@ -216,14 +215,8 @@ class GrovePiWeatherRack(object):
 
 if __name__ == '__main__':
     print("Running wxgrovepi")
-    driver = WXGrovePi()
+    import weeutil.weeutil
 
-    test_grovepi = GrovePiWeatherStation()
-
-    for i in range(0, 3):
-        test_grovepi.update_data()
-        print(test_grovepi.get_temp())
-        print(test_grovepi.get_humidity())
-        time.sleep(2)
-
-    driver.genLoopPackets()
+    driver = WXGrovePiDriver()
+    for packet in driver.genLoopPackets():
+        print(weeutil.weeutil.timestamp_to_string(packet['dateTime']), packet)
