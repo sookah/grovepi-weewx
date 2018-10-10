@@ -7,24 +7,21 @@ import time
 import math
 import logging
 import json
-import sys
+
 
 from tentacle_pi.AM2315 import AM2315
 
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
 DEBUG_SERIAL = 0  # type: bool
-LOG_FILE = '/var/tmp/groveweatherpi.log'
+LOG_FILE = '/var/log/wxgrovepi.log'
 LIVE_DATA_FILE = '/var/tmp/wxgrovepidata'
+
+logger = logging.getLogger(__name__)
+
 LOG_FORMAT = '''[%(asctime)s] - %(name)s -  { %(filename)s:%(lineno)d } | %(funcName)s | %(levelname)s - %(message)s'''
-
-grovepi_logger = logging.getLogger()
 formatter = logging.Formatter(LOG_FORMAT)
-
-ch = logging.StreamHandler(sys.stdout)
-ch.setLevel(logging.DEBUG)
-ch.setFormatter(formatter)
-grovepi_logger.addHandler(ch)
+logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format=LOG_FORMAT)
 
 
 class GrovePiWeatherStation(object):
