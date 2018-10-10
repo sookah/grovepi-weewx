@@ -3,8 +3,6 @@
 # Copyright 2018 Saujan Ghimire
 # Read data from GroveWeatherPi
 
-import click
-
 import time
 import math
 
@@ -133,7 +131,7 @@ class GrovePiWeatherRack(object):
 # PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
 
 if __name__ == '__main__':
-    click.echo("Starting GrovePI Weather station app")
+    print("Starting GrovePI Weather station app")
 
     try:
         # Instantiate GrovePi
@@ -142,9 +140,9 @@ if __name__ == '__main__':
         while True:
             # update all sensors data
             grove_pi.update_data()
-            click.echo('Temperature:', grove_pi.get_temp())
-            click.echo('Humidity:', grove_pi.get_humidity())
+            print('Temperature:', grove_pi.get_temp())
+            print('Humidity:', grove_pi.get_humidity())
             time.sleep(2)
 
     except Exception as e:
-        click.echo("Program ran into error: ", e)
+        print("Program ran into error: ", e)

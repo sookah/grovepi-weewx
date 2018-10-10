@@ -7,7 +7,7 @@ clone this repo to `/home/pi`
 
 ```bash
 
-sudo git clone https://github.com/sookah/weewx-grovepi
+git clone https://github.com/sookah/weewx-grovepi
 
 cd weewx-grovepi
 
@@ -21,11 +21,15 @@ sudo service supervisor start
 
 ```
 
-# Installing dependencies
+# Installing dependenciess
 
-for process monitoring supervisor is used:
 
-`sudo apt-get install supervisor`
+```bash
+
+# for process monitoring supervisor is used:
+sudo apt-get install supervisor
+
+```
 
 # WeeWX - GrovePi
 
