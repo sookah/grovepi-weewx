@@ -10,7 +10,7 @@ import math
 
 from tentacle_pi.AM2315 import AM2315
 
-from app.SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
+from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
 DRIVER_NAME = 'wxgrovepi'  # type: str
 DRIVER_VERSION = '0.2'  # type: str

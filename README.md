@@ -1,3 +1,32 @@
+# GroveWeatherPI Standalone
+> This part describes running the app to grab all sensors data in a raspberry pi setup 
+
+Steps to get the first dataset:
+
+clone this repo to `/home/pi`
+
+```bash
+
+sudo git clone https://github.com/sookah/weewx-grovepi
+
+cd weewx-grovepi
+
+# copy supervisor conf
+
+sudo cp app/conf/supervisord.conf /etc/supervisor/
+
+# restart with rereading new supervisor configuration
+sudo service supervisor stop
+sudo service supervisor start
+
+```
+
+# Installing dependencies
+
+for process monitoring supervisor is used:
+
+`sudo apt-get install supervisor`
+
 # WeeWX - GrovePi
 
 > Integrating GrovePi with Weewx platform
