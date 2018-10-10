@@ -8,7 +8,6 @@ import math
 import logging
 import json
 
-
 from tentacle_pi.AM2315 import AM2315
 
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
@@ -19,9 +18,9 @@ LIVE_DATA_FILE = '/var/tmp/wxgrovepidata'
 
 logger = logging.getLogger(__name__)
 
-LOG_FORMAT = '''[%(asctime)s] - %(name)s -  { %(filename)s:%(lineno)d } | %(funcName)s | %(levelname)s - %(message)s'''
+LOG_FORMAT = '''[%(asctime)s] -  { %(filename)s:%(lineno)d } | %(levelname)s - %(message)s'''
 formatter = logging.Formatter(LOG_FORMAT)
-logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format=LOG_FORMAT)
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 
 
 class GrovePiWeatherStation(object):
@@ -147,14 +146,17 @@ if __name__ == '__main__':
         # Instantiate GrovePi
         grove_pi = GrovePiWeatherStation()
 
+        logging.info('getting live data')
+
+        # weather_pi = GrovePiWeatherStation()
+
         while True:
-            logging.info('getting live data')
             # update all sensors data
             grove_pi.update_data()
-            logging.debug(grove_pi.get_data_as_json())
+            print (grove_pi.get_data_as_json())
             grove_pi.save_to_file(LIVE_DATA_FILE)
 
             time.sleep(2)
 
     except Exception as e:
-        logging.exception("Program ran into error: ", e)
+        logging.exception("Program ran into error: %s", e)
