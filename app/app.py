@@ -53,7 +53,8 @@ class GrovePiWeatherStation(object):
 
     def save_to_file(self, filename):
         with open(filename, mode='w') as f:
-            f.writelines(self.get_data_as_json())
+            f.write('outTemp = %s\n' % (self.get_temp()))
+            f.write('outHumidity = %s\n' % (self.get_humidity()))
 
     def get_data_as_json(self):
         return json.dumps({
@@ -107,29 +108,28 @@ class GrovePiWeatherRack(object):
         self.weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
 
     # custom function to get the values from the sensor
-    def get__all(self):
+    def get_all(self):
         maxEverWind = 0.0
         maxEverGust = 0.0
         totalRain = 0
-        for count in range(10):
-            currentWindSpeed = self.weatherStation.current_wind_speed() / 1.609
-            currentWindGust = self.weatherStation.get_wind_gust() / 1.609
-            totalRain = totalRain + \
-                        (self.weatherStation.get_current_rain_total() / 25.4)
 
-            if currentWindSpeed > maxEverWind:
-                maxEverWind = currentWindSpeed
+        currentWindSpeed = self.weatherStation.current_wind_speed() / 1.609
+        currentWindGust = self.weatherStation.get_wind_gust() / 1.609
+        totalRain = totalRain + \
+                    (self.weatherStation.get_current_rain_total() / 25.4)
 
-            if currentWindGust > maxEverGust:
-                maxEverGust = currentWindGust
+        if currentWindSpeed > maxEverWind:
+            maxEverWind = currentWindSpeed
 
-            time.sleep(1.0)
+        if currentWindGust > maxEverGust:
+            maxEverGust = currentWindGust
+
 
         # TODO fix this funciton here
         # return self.reiknaVindatt(self.weatherStation.current_wind_direction()) + (" %0.1f m/s") % (currentWindSpeed)
 
     # svaka flotta vindutreikningafallid okkar!
-    def reiknaVindatt(self, dummy, vindur):
+    def reiknaVindatt(self, vindur):
         # do lot of stuff (TM)
 
         val = int(math.floor(vindur / 22.5))
@@ -148,13 +148,12 @@ if __name__ == '__main__':
 
         logging.info('getting live data')
 
-        # weather_pi = GrovePiWeatherStation()
-
         while True:
             # update all sensors data
             grove_pi.update_data()
             print (grove_pi.get_data_as_json())
             grove_pi.save_to_file(LIVE_DATA_FILE)
+            grove_pi.weather.get_all()
 
             time.sleep(2)
 
