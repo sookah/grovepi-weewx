@@ -5,15 +5,20 @@
 
 import time
 import math
+import logging
 
 from tentacle_pi.AM2315 import AM2315
 
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
-DRIVER_NAME = 'wxgrovepi'  # type: str
-DRIVER_VERSION = '0.2'  # type: str
 
 DEBUG_SERIAL = 0  # type: bool
+LOG_FILE = '/var/log/groveweatherpi.log'
+
+
+LOG_FORMAT = '''[%(asctime)s] - %(name)s -  { %(filename)s:%(lineno)d } | %(funcName)s | %(levelname)s - %(message)s'''
+formatter = logging.Formatter(LOG_FORMAT)
+logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format=LOG_FORMAT)
 
 
 class GrovePiWeatherStation(object):
@@ -61,7 +66,6 @@ class SensorAM2315(object):
 
     def get_data(self):
         self.temperature, self.humidity, self.crc_check = self.am.sense()
-        print(self.crc_check)
 
     def get_temp(self):
         return self.temperature
