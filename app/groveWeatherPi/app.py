@@ -1,14 +1,9 @@
-#!/usr/bin/python
+# !/usr/bin/python
 #
 # Copyright 2018 Saujan Ghimire
-#
-# weewx driver that reads data from GrovePi Weather Station
-#
+# Read data from GroveWeatherPi
 
-from __future__ import print_function
-from __future__ import with_statement
-
-import weewx.drivers
+import click
 
 import time
 import sys
@@ -16,88 +11,12 @@ import math
 
 from tentacle_pi.AM2315 import AM2315
 
-sys.path.insert(0, '/home/pi/SDL_Pi_GroveWeatherPi/SDL_Pi_WeatherRack')
-
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
 DRIVER_NAME = 'wxgrovepi'  # type: str
 DRIVER_VERSION = '0.2'  # type: str
 
 DEBUG_SERIAL = 0  # type: bool
-
-
-# Define the loader
-# This is a factory function that returns an instance of the driver.
-# It has two arguments: the configuration dictionary, and a reference to the weeWX engine.
-def loader(config_dict, _):
-    return WXGrovePiDriver(**config_dict[DRIVER_NAME])
-
-
-def confeditor_loader():
-    return WXGrovePiConfEditor()
-
-
-class WXGrovePiDriver(weewx.drivers.AbstractDevice):
-    """
-        weewx driver that communicates with an GrovePi Weather Station
-    """
-    global DRIVER_NAME
-
-    def __init__(self, **stn_dict):
-        """Initialize the simulator
-        NAMED ARGUMENTS:
-
-        loop_interval: The time (in seconds) between emitting LOOP packets.
-        [Optional. Default is 5]`
-
-        max_tries - how often to retry serial communication before giving up
-        [Optional. Default is 5]
-
-        retry_wait - how long to wait, in seconds, before retrying after a failure
-
-        :param stn_dict:
-        """
-        self.name = DRIVER_NAME
-
-        self.polling_interval = float(stn_dict.get('loop_interval', 5))
-        self.max_tries = int(stn_dict.get('max_tries', 5))
-        self.retry_wait = int(stn_dict.get('retry_wait', 10))
-
-    @property
-    def hardware_name(self):
-        """
-        Return a string with a short nickname for the hardware
-
-        :return: Driver name
-        """
-        return self.name
-
-    def genLoopPackets(self):
-        _packet = {
-            'dateTime': int(time.time() + 0.5),
-            'usUnits': weewx.METRIC,
-        }
-        while True:
-            # Create Loop _packet
-            # test data
-
-            _packet['outTemp'] = 22
-            _packet['outHumidity'] = 50.0
-            yield _packet
-
-            time.sleep(self.polling_interval)
-
-
-class WXGrovePiConfEditor(weewx.drivers.AbstractConfEditor):
-    @property
-    def default_stanza(self):
-        return """
-          
-        [WXGrovePi]
-        # This section is for the GroveWeatherPi series of weather stations.
-        # The driver to use:
-        driver = user.wxgrovepi        
-        """
 
 
 class GrovePiWeatherStation(object):
@@ -126,6 +45,9 @@ class GrovePiWeatherStation(object):
         pass
 
     def get_rain_data(self):
+        pass
+
+    def save_to_file(self, filename):
         pass
 
 
@@ -212,9 +134,18 @@ class GrovePiWeatherRack(object):
 # PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
 
 if __name__ == '__main__':
-    print("Running wxgrovepi")
-    import weeutil.weeutil
+    click.echo("Starting GrovePI Weather station app")
 
-    driver = WXGrovePiDriver()
-    for packet in driver.genLoopPackets():
-        print(weeutil.weeutil.timestamp_to_string(packet['dateTime']), packet)
+    try:
+        # Instantiate GrovePi
+        grove_pi = GrovePiWeatherStation()
+
+        while True:
+            # update all sensors data
+            grove_pi.update_data()
+            click.echo('Temperature:', grove_pi.get_temp())
+            click.echo('Humidity:', grove_pi.get_humidity())
+            time.sleep(2)
+
+    except Exception as e:
+        click.echo("Program ran into error: ", e)

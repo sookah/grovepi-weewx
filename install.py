@@ -20,7 +20,7 @@ class WXGrovePiInstaller(ExtensionInstaller):
                     'station_type': 'wxgrovepi'},
                 'wxgrovepi': {
                     'loop_interval': '10',
-                    'path': '/var/tmp/datafile',
+                    'path': '/var/tmp/wxgrovepidata',
                     'driver': 'user.wxgrovepi'}},
-            files=[('bin/user', ['bin/user/wxgrovepi.py'])]
+            files=[('bin/user', ['bin/user/wxgrovepi.py']), ('bin/user', ['bin/user/wxgrovepifileparse.py'])]
         )
