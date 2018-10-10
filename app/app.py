@@ -6,15 +6,14 @@
 import time
 import math
 import logging
+import json
 
 from tentacle_pi.AM2315 import AM2315
 
 from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
-
 DEBUG_SERIAL = 0  # type: bool
 LOG_FILE = '/var/log/groveweatherpi.log'
-
 
 LOG_FORMAT = '''[%(asctime)s] - %(name)s -  { %(filename)s:%(lineno)d } | %(funcName)s | %(levelname)s - %(message)s'''
 formatter = logging.Formatter(LOG_FORMAT)
@@ -51,6 +50,12 @@ class GrovePiWeatherStation(object):
 
     def save_to_file(self, filename):
         pass
+
+    def get_data_as_json(self):
+        json.dumps({
+            "outTemp": self.get_temp(),
+            "outHumidity": self.get_humidity()
+        })
 
 
 class SensorAM2315(object):
@@ -135,18 +140,18 @@ class GrovePiWeatherRack(object):
 # PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
 
 if __name__ == '__main__':
-    print("Starting GrovePI Weather station app")
+    logging.info("Starting GrovePI Weather station app")
 
     try:
         # Instantiate GrovePi
         grove_pi = GrovePiWeatherStation()
 
         while True:
+            logging.info('getting live data')
             # update all sensors data
             grove_pi.update_data()
-            print('Temperature:', grove_pi.get_temp())
-            print('Humidity:', grove_pi.get_humidity())
+
             time.sleep(2)
 
     except Exception as e:
-        print("Program ran into error: ", e)
+        logging.exception("Program ran into error: ", e)
