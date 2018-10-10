@@ -14,6 +14,7 @@ from SDL_Pi_WeatherRack import SDL_Pi_WeatherRack
 
 DEBUG_SERIAL = 0  # type: bool
 LOG_FILE = '/var/log/groveweatherpi.log'
+LIVE_DATA_FILE = '/var/tmp/wxgrovepidata'
 
 LOG_FORMAT = '''[%(asctime)s] - %(name)s -  { %(filename)s:%(lineno)d } | %(funcName)s | %(levelname)s - %(message)s'''
 formatter = logging.Formatter(LOG_FORMAT)
@@ -49,10 +50,11 @@ class GrovePiWeatherStation(object):
         pass
 
     def save_to_file(self, filename):
-        pass
+        with open(filename, mode='w') as f:
+            f.writelines(self.get_data_as_json())
 
     def get_data_as_json(self):
-        json.dumps({
+        return json.dumps({
             "outTemp": self.get_temp(),
             "outHumidity": self.get_humidity()
         })
@@ -135,10 +137,6 @@ class GrovePiWeatherRack(object):
         return arr[(val % 16)]
 
 
-# define a main entry point for basic testing of the station without weewx
-# engine and service overhead.  invoke this as follows from the weewx root dir:
-# PYTHONPATH=bin python bin/weewx/drivers/grovepi.py
-
 if __name__ == '__main__':
     logging.info("Starting GrovePI Weather station app")
 
@@ -150,6 +148,8 @@ if __name__ == '__main__':
             logging.info('getting live data')
             # update all sensors data
             grove_pi.update_data()
+            logging.debug(grove_pi.get_data_as_json())
+            grove_pi.save_to_file(LIVE_DATA_FILE)
 
             time.sleep(2)
 
