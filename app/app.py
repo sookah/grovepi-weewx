@@ -52,14 +52,39 @@ class GrovePiWeatherStation(object):
         return self.weather.get_current_wind_gust()
 
     def save_to_file(self, filename):
+        #     [Labels]
+        # ...
+        # [[Generic]]
+        # barometer = Barometer
+        # dewpoint = Dew Point
+        # heatindex = Heat Index
+        # inHumidity = Inside Humidity
+        # inTemp = Inside Temperature
+        # outHumidity = Outside Humidity
+        # outTemp = Outside Temperature
+        # radiation = Radiation
+        # rain = Rain
+        # rainRate = Rain Rate
+        # rxCheckPercent = ISS Signal Quality
+        # windDir = Wind Direction
+        # windGust = Gust Speed
+        # windGustDir = Gust Direction
+        # windSpeed = Wind Speed
+        # windchill = Wind Chill
+        # windgustvec = Gust Vector
+        # windvec = Wind Vector
         with open(filename, mode='w') as f:
             f.write('outTemp = %s\n' % (self.get_temp()))
             f.write('outHumidity = %s\n' % (self.get_humidity()))
+            f.write('windGust = %s\n' % (self.get_wind_gust()))
+            f.write('windSpeed = %s\n' % (self.get_wind_speed()))
 
     def get_data_as_json(self):
         return json.dumps({
             "outTemp": self.get_temp(),
-            "outHumidity": self.get_humidity()
+            "outHumidity": self.get_humidity(),
+            "windGust": self.get_wind_gust(),
+            "windSpeed": self.get_wind_speed()
         })
 
 
