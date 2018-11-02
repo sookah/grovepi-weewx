@@ -175,7 +175,6 @@ if __name__ == '__main__':
             grove_pi.update_data()
             print (grove_pi.get_data_as_json())
             grove_pi.save_to_file(LIVE_DATA_FILE)
-            grove_pi.weather.get_all()
 
             time.sleep(2)
 
