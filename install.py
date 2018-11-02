@@ -10,17 +10,16 @@ def loader():
 class WXGrovePiInstaller(ExtensionInstaller):
     def __init__(self):
         super(WXGrovePiInstaller, self).__init__(
-            version="0.2",
-            name='wxgrovepi',
+            version="0.3",
+            name='wxgrovepifp',
             description='weewx driver for GrovePi.',
             author="Saujan Ghimire",
             author_email="",
             config={
-                'Station': {
-                    'station_type': 'wxgrovepi'},
-                'wxgrovepi': {
+                'Station': {'station_type': 'wxgrovepifp'},
+                'wxgrovepifp': {
                     'loop_interval': '10',
                     'path': '/var/tmp/wxgrovepidata',
-                    'driver': 'user.wxgrovepi'}},
-            files=[('bin/user', ['bin/user/wxgrovepi.py']), ('bin/user', ['bin/user/wxgrovepifileparse.py'])]
+                    'driver': 'user.wxgrovepifp'}},
+            files=[('bin/user', ['bin/user/wxgrovepifp.py'])]
         )

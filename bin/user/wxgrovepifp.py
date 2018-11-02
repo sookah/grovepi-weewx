@@ -81,7 +81,8 @@ class WXGrovePiFpDriver(weewx.drivers.AbstractDevice):
             _packet = {'dateTime': int(time.time() + 0.5),
                        'usUnits': weewx.US}
             for vname in data:
-                _packet[self.label_map.get(vname, vname)] = _get_as_float(data, vname)
+                _packet[self.label_map.get(
+                    vname, vname)] = _get_as_float(data, vname)
 
             yield _packet
             time.sleep(self.poll_interval)

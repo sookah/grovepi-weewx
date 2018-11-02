@@ -42,14 +42,14 @@ class GrovePiWeatherStation(object):
     def get_humidity(self):
         return round(self.temp_sensor.get_humidity(), 1)
 
-    def get_anemometer_data(self):
-        pass
-
-    def get_wind_data(self):
-        pass
+    def get_wind_speed(self):
+        return self.weather.get_current_wind_speed()
 
     def get_rain_data(self):
-        pass
+        return self.weather.get_total_rain()
+
+    def get_wind_gust(self):
+        return self.weather.get_current_wind_gust()
 
     def save_to_file(self, filename):
         with open(filename, mode='w') as f:
@@ -89,9 +89,11 @@ class GrovePiWeatherRack(object):
     def __init__(self):
         # GPIO Numbering Mode GPIO.BCM
 
-        ANENOMETER_PIN = 26
-        RAIN_PIN = 21
-
+        anenometer_pin = 26
+        rain_pin = 21
+        self.maxEverWind = 0.0
+        self.maxEverGust = 0.0
+        self.totalRain = 0
         # constants
 
         SDL_MODE_INTERNAL_AD = 0
@@ -103,36 +105,31 @@ class GrovePiWeatherRack(object):
         SDL_MODE_DELAY = 1
 
         self.weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(
-            ANENOMETER_PIN, RAIN_PIN, 0, 0, SDL_MODE_I2C_ADS1015)
+            anenometer_pin, rain_pin, 0, 0, SDL_MODE_I2C_ADS1015)
 
         self.weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
 
-    # custom function to get the values from the sensor
-    def get_all(self):
-        maxEverWind = 0.0
-        maxEverGust = 0.0
-        totalRain = 0
+    def get_current_wind_speed(self):
+        current_wind_speed = self.weatherStation.current_wind_speed() / 1.609
 
-        currentWindSpeed = self.weatherStation.current_wind_speed() / 1.609
-        currentWindGust = self.weatherStation.get_wind_gust() / 1.609
-        totalRain = totalRain + \
-                    (self.weatherStation.get_current_rain_total() / 25.4)
+        if current_wind_speed > self.maxEverWind:
+            self.maxEverWind = current_wind_speed
+        return current_wind_speed
 
-        if currentWindSpeed > maxEverWind:
-            maxEverWind = currentWindSpeed
+    def get_current_wind_gust(self):
+        current_wind_gust = self.weatherStation.get_wind_gust() / 1.609
 
-        if currentWindGust > maxEverGust:
-            maxEverGust = currentWindGust
+        if current_wind_gust > self.maxEverGust:
+            self.maxEverGust = current_wind_gust
+        return current_wind_gust
 
+    def get_total_rain(self):
+        self.totalRain = self.totalRain + \
+            (self.weatherStation.get_current_rain_total() / 25.4)
+        return self.totalRain
 
-        # TODO fix this funciton here
-        # return self.reiknaVindatt(self.weatherStation.current_wind_direction()) + (" %0.1f m/s") % (currentWindSpeed)
-
-    # svaka flotta vindutreikningafallid okkar!
-    def reiknaVindatt(self, vindur):
-        # do lot of stuff (TM)
-
-        val = int(math.floor(vindur / 22.5))
+    def wind_direction(self):
+        val = int(math.floor(self.get_current_wind_speed() / 22.5))
         arr = ["N", "NNA", "NA", "ANA", "A", "ASA", "SA", "SSA",
                "S", "SSV", "SV", "VSV", "V", "VNV", "NV", "NNV"]
 
@@ -143,7 +140,7 @@ if __name__ == '__main__':
     logging.info("Starting GrovePI Weather station app")
 
     try:
-        # Instantiate GrovePi
+            # Instantiate GrovePi
         grove_pi = GrovePiWeatherStation()
 
         logging.info('getting live data')
