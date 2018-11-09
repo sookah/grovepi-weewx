@@ -7,6 +7,7 @@ import time
 import math
 import logging
 import json
+from decimal import Decimal
 
 from tentacle_pi.AM2315 import AM2315
 
@@ -35,6 +36,7 @@ class GrovePiWeatherStation(object):
     def update_data(self):
         # get AM2315 data
         self.temp_sensor.get_data()
+        self.weather.get_data()
 
     def get_temp(self):
         return round(self.temp_sensor.get_temp(), 1)
@@ -119,6 +121,8 @@ class GrovePiWeatherRack(object):
         self.maxEverWind = 0.0
         self.maxEverGust = 0.0
         self.totalRain = 0
+        self.currentWindGust = 0
+        self.currentWindSpeed = 0
         # constants
 
         SDL_MODE_INTERNAL_AD = 0
@@ -135,23 +139,26 @@ class GrovePiWeatherRack(object):
         self.weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
 
     def get_current_wind_speed(self):
-        current_wind_speed = self.weatherStation.current_wind_speed() / 1.609
-
-        if current_wind_speed > self.maxEverWind:
-            self.maxEverWind = current_wind_speed
-        return current_wind_speed
+        return self.currentWindSpeed
 
     def get_current_wind_gust(self):
-        current_wind_gust = self.weatherStation.get_wind_gust() / 1.609
-
-        if current_wind_gust > self.maxEverGust:
-            self.maxEverGust = current_wind_gust
-        return current_wind_gust
+        return self.currentWindGust
 
     def get_total_rain(self):
-        self.totalRain = self.totalRain + \
-            (self.weatherStation.get_current_rain_total() / 25.4)
         return self.totalRain
+
+    def get_data(self):
+        for count in range(10):
+            self.currentWindSpeed = self.weatherStation.current_wind_speed() / 2.5
+            self.currentWindGust = round(Decimal(self.weatherStation.get_wind_gust() / 1.609, 2))
+            self.totalRain = self.totalRain + (self.weatherStation.get_current_rain_total() / 25.4)
+
+            if self.currentWindSpeed > self.maxEverWind:
+                self.maxEverWind = self.currentWindSpeed
+
+            if self.currentWindGust > self.maxEverGust:
+                self.maxEverGust = self.currentWindGust
+            time.sleep(1)
 
     def wind_direction(self):
         val = int(math.floor(self.get_current_wind_speed() / 22.5))
@@ -176,7 +183,7 @@ if __name__ == '__main__':
             print (grove_pi.get_data_as_json())
             grove_pi.save_to_file(LIVE_DATA_FILE)
 
-            time.sleep(2)
+            time.sleep(5)
 
     except Exception as e:
         logging.exception("Program ran into error: %s", e)
